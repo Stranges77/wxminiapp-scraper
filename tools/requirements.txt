@@ -1,0 +1,4 @@
+# tools/ 适配工具的依赖 (微信升级后重新适配地址时才需要)
+# 安装: python -m venv .venv && .venv\Scripts\pip install -r requirements.txt
+capstone>=5.0
+pefile>=2024.8.26
