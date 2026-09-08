@@ -8,7 +8,7 @@
 用法:  python 开始采集.py
 """
 
-__version__ = "1.0.1"
+__version__ = "1.0.2"
 
 import asyncio
 import json
