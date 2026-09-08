@@ -64,6 +64,7 @@ const hookOnLoadScene = (a1, sceneOffsets) => {
     // 1035: from issue #78
     // 1053: from issue #25
     // 1074: from issue #32
+    // 1096: from chat history (群聊/单聊的「聊天记录」聚合页里点开小程序卡片)
     // 1145: from search
     // 1178: from phone (issue #117)
     // 1256: from recent
@@ -71,7 +72,7 @@ const hookOnLoadScene = (a1, sceneOffsets) => {
     // 1302: from services
     // 1308: minigame?
     const sceneNumberArray = [
-        1005, 1007, 1008, 1027, 1035, 1036, 1053, 1074, 1145, 1178, 1256,
+        1005, 1007, 1008, 1027, 1035, 1036, 1053, 1074, 1096, 1145, 1178, 1256,
         1260, 1302, 1308,
     ];
     if (!sceneNumberArray.includes(miniappScenePtr.readInt())) {

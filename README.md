@@ -2,7 +2,9 @@
 
 > PC 微信小程序商品信息采集工具（CDP 方案）
 >
-> Version: **v1.0.0** ｜ License: **非商业学习许可**（仅限个人学习研究，禁止商业用途）
+> Version: **v1.0.1** ｜ License: **非商业学习许可**（仅限个人学习研究，禁止商业用途）
+>
+> 更新日志见 [CHANGELOG.md](CHANGELOG.md)。
 
 通过 PC 微信内置的远程调试通道（Chrome DevTools Protocol），像操作网页一样采集微信小程序中展示的商品信息。
 
