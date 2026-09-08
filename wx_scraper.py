@@ -33,7 +33,7 @@ wx_scraper.py — 微信小程序商品页图片/文本采集器
   python wx_scraper.py --out D:\采集     # 自定义输出根目录
 """
 
-__version__ = "1.0.4"
+__version__ = "1.0.3"
 
 import argparse
 import asyncio
