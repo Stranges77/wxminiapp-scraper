@@ -1,2 +1,3 @@
 httpx>=0.27
 websockets>=12.0
+Pillow>=10.0.0  # webp 图片转 jpg（快手 CDN 对 .jpg URL 也返回 webp 内容，必须依赖 Pillow 转换）

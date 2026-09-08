@@ -33,7 +33,7 @@ wx_scraper.py — 微信小程序商品页图片/文本采集器
   python wx_scraper.py --out D:\采集     # 自定义输出根目录
 """
 
-__version__ = "1.0.2"
+__version__ = "1.0.3"
 
 import argparse
 import asyncio
@@ -61,6 +61,9 @@ HEADERS = {
                    "Chrome/120.0.0.0 Safari/537.36"),
     "Referer": "https://servicewechat.com/",
 }
+
+# Pillow 缺失时给一次提示，避免每张 webp 图片都刷屏
+_PILLOW_WARNED = False
 
 
 # ========================= CDP 客户端 =========================
@@ -537,7 +540,12 @@ def _detect_img_ext(raw, url=""):
 
 
 def _webp_to_jpg(raw):
-    """有 Pillow 时把 webp 字节转成 jpg; 没装则返回 None (原样保存 webp)。"""
+    """有 Pillow 时把 webp 字节转成 jpg; 没装则返回 None (原样保存 webp)。
+
+    快手 CDN 对所有 .jpg URL 都返回 webp 字节流（HTTP 头撒谎说 image/jpeg，
+    实际内容前 12 字节是 RIFF...WEBP），剥 OSS 参数也无效；
+    必须装 Pillow 才能转回 jpg。无 Pillow 时给一次性提示。
+    """
     try:
         from io import BytesIO
         from PIL import Image
@@ -545,6 +553,13 @@ def _webp_to_jpg(raw):
         out = BytesIO()
         im.save(out, "JPEG", quality=92)
         return out.getvalue()
+    except ImportError:
+        global _PILLOW_WARNED
+        if not _PILLOW_WARNED:
+            _PILLOW_WARNED = True
+            print("\n⚠️  未安装 Pillow，无法把 webp 转 jpg，图片会保留为 .webp 格式。")
+            print("   修复：pip install Pillow（或 pip install -r requirements.txt）\n")
+        return None
     except Exception:
         return None
 

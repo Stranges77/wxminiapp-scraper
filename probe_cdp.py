@@ -31,7 +31,7 @@ probe_cdp.py — 微信小程序 CDP 采集可行性体检
   python probe_cdp.py --port 62001   # 自定义 CDP 代理端口
 """
 
-__version__ = "1.0.2"
+__version__ = "1.0.3"
 
 import argparse
 import asyncio

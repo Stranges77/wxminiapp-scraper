@@ -10,6 +10,12 @@
 > 维护方式：每次迭代/发布时，在最上方新增一个 `## [v版本号] - YYYY-MM-DD` 区块，
 > 把本次变更按分类列在下面；最新版本始终排在最上面。
 
+## [v1.0.3] - 2026-09-08
+
+### 修复
+
+- 修复采集图片主图保留为 webp 格式无法正常打开的问题。根因是快手 CDN 对所有 `.jpg` URL 都返回 webp 字节流（HTTP 头 `content-type` 撒谎说 `image/jpeg`，但实际内容前 12 字节是 `RIFF...WEBP`），剥 OSS 参数、改 Accept/Referer 都无效，唯一可行方案是下载后用 Pillow 转换。本次修复：① `requirements.txt` 新增 `Pillow>=10.0.0` 依赖；② `_webp_to_jpg` 函数在 Pillow 未安装时给一次性友好提示，不再静默失败；③ 新增 `_PILLOW_WARNED` 全局标志位避免重复提示。已实测转换工作正常：47KB webp → 130KB jpg。（`wx_scraper.py`、`requirements.txt`）
+
 ## [v1.0.2] - 2026-09-08
 
 ### 变更
@@ -43,6 +49,7 @@
 - 已适配入口：群聊转发、搜索、最近使用等场景（发现页 scene 1000 会导致进程崩溃，已排除）。
 - 合规：自定义《非商业学习许可协议》、代码版权头、README 与使用说明中的免责声明。
 
+[v1.0.3]: https://github.com/Stranges77/wxminiapp-scraper/compare/v1.0.2...v1.0.3
 [v1.0.2]: https://github.com/Stranges77/wxminiapp-scraper/compare/v1.0.1...v1.0.2
 [v1.0.1]: https://github.com/Stranges77/wxminiapp-scraper/compare/v1.0.0...v1.0.1
 [v1.0.0]: https://github.com/Stranges77/wxminiapp-scraper/releases/tag/v1.0.0

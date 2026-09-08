@@ -1,0 +1,10 @@
+fix(webp): 修复主图保留为 webp 无法打开 + Pillow 依赖缺失
+
+根因: 快手 CDN 对所有 .jpg URL 都返回 webp 字节流 (content-type 头撒谎 image/jpeg, 实际内容前 12 字节是 RIFF...WEBP), 剥 OSS 参数无效。
+
+修复:
+- requirements.txt 新增 Pillow>=10.0.0 依赖
+- _webp_to_jpg 函数 Pillow 未装时给一次性友好提示 (不再静默失败)
+- 新增 _PILLOW_WARNED 全局标志位避免重复提示
+
+版本号 5 处同步 1.0.2 -> 1.0.3
