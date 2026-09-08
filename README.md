@@ -2,7 +2,7 @@
 
 > PC 微信小程序商品信息采集工具（CDP 方案）
 >
-> Version: **v1.0.3** ｜ License: **非商业学习许可**（仅限个人学习研究，禁止商业用途）
+> Version: **v1.0.4** ｜ License: **非商业学习许可**（仅限个人学习研究，禁止商业用途）
 >
 > 更新日志见 [CHANGELOG.md](CHANGELOG.md)。
 

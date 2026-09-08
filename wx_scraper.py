@@ -33,7 +33,7 @@ wx_scraper.py — 微信小程序商品页图片/文本采集器
   python wx_scraper.py --out D:\采集     # 自定义输出根目录
 """
 
-__version__ = "1.0.3"
+__version__ = "1.0.4"
 
 import argparse
 import asyncio
@@ -257,7 +257,7 @@ EXTRACT_JS = r"""
         '上市年份', '货号', '产地', '重量', '尺寸', '净重', '毛重',
         '流行元素', '图案', '花型', '花色', '是否连帽', '是否外贸'];
     // 商品关键词: 衣物/品类/材质词 (出现其一就算商品名)
-    const goodsKw = ['针织衫', '卫衣', '衬衫', 'T恤', '体恤', '裤', '鞋', '包', '风衣', '大衣',
+    const goodsKw = ['针织衫', '卫衣', '衬衫', 'POLO衫', 'polo衫', 'T恤', '体恤', '衫', '裤', '鞋', '包', '风衣', '大衣',
         '夹克', '西装', '外套', '羽绒服', '毛衣', '棉衣', '内衣', '袜', '帽', '围巾', '手套',
         '手机', '电脑', '平板', '耳机', '键盘', '鼠标', '显示器', '手表', '手环', '相机',
         '零食', '水果', '饮料', '酒', '茶', '咖啡', '奶粉', '纸', '米', '油',
@@ -272,14 +272,18 @@ EXTRACT_JS = r"""
         '轻奢', '休闲', '商务', '运动', '潮流', '复古', '简约'];
     function isTitleLike(l) {
         if (l.length < 10 || l.length > 120) return false;
-        if (junk.some(k => l.indexOf(k) > -1)) return false;
         if (/^\d+$/.test(l)) return false;
         // 排除纯参数值: 逗号分隔多值 + 含参数关键词
         if (l.indexOf(',') > -1 && nonTitle.some(k => l.indexOf(k) > -1)) return false;
+        // 排除年龄/尺码参数值: 18-25周岁 / 90-115斤 / 160-170cm
+        if (/\d+[-~]\d+\s*(斤|cm|周岁)/.test(l)) return false;
         // 排除规格层: 含 "已选择"/"已选"
         if (l.indexOf('已选择') > -1 || l.indexOf('已选') > -1) return false;
-        // 排除尺码描述: 含 "建议xx斤"/"xx-xx斤"/"xx-xxcm" 模式
-        if (/\d+[-~]\d+\s*(斤|cm)/.test(l)) return false;
+        // junk 词(服务/导航/营销文案)只对"短行或不含商品词的行"生效;
+        // 长标题(>=15字)尾部常粘着「退货补运费」等服务标签, 不能因此误杀整行
+        if (!(l.length >= 15 && hasGoodsKw(l))) {
+            if (junk.some(k => l.indexOf(k) > -1)) return false;
+        }
         return true;
     }
     function hasGoodsKw(l) {
@@ -306,6 +310,23 @@ EXTRACT_JS = r"""
         if (cand.length) title = cand[0];
     }
     if (!title) title = document.title || '(未提取到标题)';
+
+    // 剥掉标题尾部粘着的服务/营销标签(快手常把「退货补运费」「包邮」等拼在标题末尾)
+    if (title && title.length > 10) {
+        const suffixTags = ['退货补运费', '退货包运费', '破损包退', '极速退款', '闪电退货',
+            '晚发立赔', '7天价保', '七天价保', '7天无理由', '七天无理由', '假一赔十',
+            '假一赔三', '正品保障', '品质保障', '运费险', '全国包邮', '包邮',
+            '闪电发货', '极速发货', '当日发货', '现货速发'];
+        let _t = title, _changed = true;
+        while (_changed) {
+            _changed = false;
+            for (const tag of suffixTags) {
+                if (_t.endsWith(tag)) { _t = _t.slice(0, -tag.length); _changed = true; }
+            }
+            _t = _t.trim();
+        }
+        if (_t.length >= 4) title = _t;
+    }
 
     // ============ 结构化商品字段 ============
     // 价格: ￥ / ¥ 开头, 数字最多 2 位小数 (取数值最大的那个, 详情页和弹层各有一个, 弹层的通常在上方)
